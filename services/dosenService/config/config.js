@@ -11,7 +11,7 @@ const db = mysql.createPool({
 
 const config = {
     jwtSecret: process.env.JWT_SECRET,
-    jwtExpiresIn: process.env.JWT_EXPIRES_IN
+    queueDosen: process.env.RABBITMQ_QUEUE_DOSEN
 };
 
-module.exports = { config, db };
+module.exports = { db, config };
