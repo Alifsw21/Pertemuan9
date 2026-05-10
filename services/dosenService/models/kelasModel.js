@@ -1,10 +1,10 @@
 const { db } = require('../config/config');
 
 const kelas = {
-    createKelas: async(namaKelas) => {
+    createKelas: async(idDosen, idMatkul, namaKelas) => {
         const [result] = await db.execute(
-            `INSERT INTO kelas (namaKelas) VALUES (?)`,
-            [namaKelas]
+            `INSERT INTO kelas (idDosen, idMatkul, namaKelas) VALUES (?, ?, ?)`,
+            [idDosen, idMatkul, namaKelas]
         );
         return result;
     },

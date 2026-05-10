@@ -7,6 +7,8 @@ router.post('/register', authController.register);
 
 router.post('/login', authController.login);
 
+router.get('/', authenticateJWT, authController.selectUser);
+
 router.put('/update/:id', authenticateJWT, authController.updateUser);
 
 router.delete('/delete/:id', authenticateJWT, authController.deleteUser);

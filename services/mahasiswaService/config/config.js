@@ -10,7 +10,8 @@ const db = mysql.createPool({
 });
 
 const config = {
-    jwtSecret: process.env.JWT_SECRET
+    jwtSecret: process.env.JWT_SECRET,
+    queueMahasiswa: process.env.RABBITMQ_QUEUE_MAHASISWA
 };
 
-module.exports = { config, db };
+module.exports = { db, config };

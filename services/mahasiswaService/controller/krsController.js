@@ -1,36 +1,40 @@
-const rabbitmq = require('../config/rabbitmq');
-const kelasModel = require('../models/kelasModel');
+const krsModel = require('../models/krsModel');
+const { getChannel } = require('../config/rabbitmq');
 
-const kelas = {
-    createKelas: async (req, res) => {
+const krs = {
+    createKrs: async (req, res) => {
         if (!req.user || req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
-                message: 'Akses ditolak!',
+                message: 'Akses ditolak',
                 data: null
             });
         }
-    
+
         try {
-            const { idDosen, idMatkul, namaKelas } = req.body;
-    
-            if (!idDosen || !idMatkul || !namaKelas) {
+            const { idMahasiswa, idKelas } = req.body;
+
+            if (!idMahasiswa || !idKelas) {
                 return res.status(404).json({
                     success: false,
-                    message: 'id dosen, id matkul, dan nama kelas harus diisi',
+                    message: 'Id mahasiswa dan id kelas harus diisi',
                     data: null
                 });
             }
-    
-            const result = await kelasModel.createKelas(idDosen, idMatkul, namaKelas);
-    
+
+            const result = await krsModel.createKrs(idMahasiswa, idKelas);
+
             return res.status(201).json({
                 success: true,
-                message: 'Data kelas berhasil ditambahkan',
-                data: { id: result.insertId, idDosen, idMatkul, namaKelas }
+                message: 'Data krs berhasil dibuat',
+                data: {
+                    id: result.insertId,
+                    idMahasiswa,
+                    idKelas
+                }
             });
         } catch (error) {
-            console.error("Error pada saat membuat data kelas:", error);
+            console.error("Error pada saat membuat data krs:", error);
             return res.status(500).json({
                 success: false,
                 message: 'Terjadi kesalahan pada server',
@@ -39,33 +43,33 @@ const kelas = {
         }
     },
 
-    selectKelas: async (req, res) => {
-        if (!req.user || req.user.role !== 'admin' && req.user.role !== 'dosen') {
-             return res.status(403).json({
+    selectKrs: async (req, res) => {
+        if (!req.user.role || req.user.role !== 'admin' && req.user.role !== 'mahasiswa') {
+            return res.status(403).json({
                 success: false,
-                message: 'Akses ditolak!',
+                message: 'Akses ditolak',
                 data: null
             });
         }
-    
+
         try {
-            const rows = await kelasModel.selectKelas();
-    
+            const rows = await krsModel.selectKrs();
+
             if (rows.length === 0) {
-                return res.status(404).json({
+                return res.status(400).json({
                     success: false,
-                    message: 'Data kelas kosong',
+                    message: 'Data krs kosong',
                     data: null
                 });
             }
-    
+
             return res.status(200).json({
                 success: true,
-                message: 'Data kelas berhasil diambil',
+                message: 'Data krs berhasil diambil',
                 data: rows
             });
         } catch (error) {
-            console.error("Error pada saat menampilkan data kelas:", error);
+            console.error("Error pada saat menampilkan data krs:", error);
             return res.status(500).json({
                 success: false,
                 message: 'Terjadi kesalahan pada server',
@@ -74,45 +78,49 @@ const kelas = {
         }
     },
 
-    updateKelas: async (req, res) => {
-        if (!req.user || req.user.role !== 'admin') {
+    updateKrs: async (req, res) => {
+        if (!req.user.role || req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
                 message: 'Akses ditolak',
                 data: null
             });
         }
-    
+
         try {
-            const { idKelas } = req.params;
-            
-            if (!idKelas) {
-                return res.status(404).json({
+            const { idKRS } = req.params;
+
+            if (!idKRS) {
+                return res.status(400).json({
                     success: false,
-                    message: `Data kelas dengan id ${idKelas} tidak ditemukan`,
+                    message: `Data krs dengan id ${idKRS} tidak ditemukan`,
                     data: null
                 });
             }
-    
-            const { namaKelas } = req.body;
-    
-            if (!namaKelas) {
+
+            const { idMahasiswa, idKelas } = req.body;
+
+            if (!idMahasiswa || !idKelas) {
                 return res.status(404).json({
                     success: false,
-                    message: 'Nama kelas harus diisi',
+                    message: 'id mahasiswa dan id kelas harus diisi',
                     data: null
                 });
             }
-    
-            const result = await kelasModel.updateKelas(idKelas, namaKelas);
-    
+
+            const result = await krsModel.updateKrs(idKRS, idMahasiswa, idKelas);
+
             return res.status(200).json({
                 success: true,
-                message: `Data kelas dengan id ${idKelas} berhasil diperbarui`,
-                data: { id: result.insertId, namaKelas}
+                message: `Data krs dengan ${idKRS} berhasil diperbarui`,
+                data: { 
+                    id: result.insertId,
+                    idMahasiswa,
+                    idKelas
+                }
             });
         } catch (error) {
-            console.error("Error pada saat memperbarui data kelas:", error);
+            console.error("Error pada saat memperbarui data krs:", error);
             return res.status(500).json({
                 success: false,
                 message: 'Terjadi kesalahan pada server',
@@ -121,35 +129,35 @@ const kelas = {
         }
     },
 
-    deleteKelas: async (req, res) => {
-        if (!req.user || req.user.role !== 'admin') {
+    deleteKrs: async (req, res) => {
+        if (!req.user.role || req.user.role !== 'admin') {
             return res.status(403).json({
                 success: false,
                 message: 'Akses ditolak',
                 data: null
             });
         }
-    
+
         try {
-            const { idKelas } = req.params;
-    
-            if (!idKelas) {
-                return res.status(404).json({
+            const { idKRS } = req.params;
+
+            const result = await krsModel.deleteKrs(idKRS);
+
+            if (result.affectedRows === 0) {
+                return res.status(400).json({
                     success: false,
-                    message: `Data kelas dengan id ${idKelas} tidak ditemukan`,
+                    message: `Data krs dengan id ${idKRS} tidak ditemukan`,
                     data: null
                 });
             }
-    
-            const result = await kelasModel.deleteKelas(idKelas);
-    
+
             return res.status(200).json({
                 success: true,
-                message: `Data kelas dengan id ${idKelas} berhasil dihapus`,
+                message: `Data krs dengan id ${idKRS} berhasil dihapus`,
                 data: null
             });
         } catch (error) {
-            console.error("Error pada saat menghapus data kelas:", error);
+            console.error("Error pada saat menghapus data krs:", error);
             return res.status(500).json({
                 success: false,
                 message: 'Terjadi kesalahan pada server',
@@ -159,4 +167,4 @@ const kelas = {
     }
 }
 
-module.exports = kelas;
+module.exports = krs;

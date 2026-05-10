@@ -1,15 +1,15 @@
 const { getChannel } = require('../config/rabbitmq');
 const { config } = require('../config/config');
-const dosenModel = require('../models/dosenModel');
+const mahasiswaModel = require('../models/mahasiswaModel');
 
-const startDosenConsumer = async () => {
+const startMahasiswaConsumer = async () => {
     try {
         const channel = getChannel();
-        const queueName = config.queueDosen;
+        const queueName = config.queueMahasiswa;
 
         await channel.assertQueue(queueName, { durable: true });
 
-        console.log(`Dosen consumer siap mendengarkan antrean: ${queueName}`);
+        console.log(`Mahasiswa consumer siap mendengarkan antrean: ${queueName}`);
 
         channel.consume(queueName, async (msg) => {
             if (msg !== null) {
@@ -17,10 +17,10 @@ const startDosenConsumer = async () => {
                 console.log(`Pesan diterima dari auth service:`, data);
 
                 try {
-                    await dosenModel.createDosen(data.userId, data.username, data.username);
+                    await mahasiswaModel.createMahasiswa(data.userId, data.username, data.username);
 
                     channel.ack(msg);
-                    console.log(`Profil dosen untuk ${data.username} berhasil dibuat`);
+                    console.log(`Profil Mahasiswa untuk ${data.username} berhasil dibuat`);
                 } catch (error) {
                     console.error('Gagal menyimpan ke database:', error);
                 }
@@ -31,4 +31,4 @@ const startDosenConsumer = async () => {
     }
 };
 
-module.exports = startDosenConsumer;
+module.exports = startMahasiswaConsumer;

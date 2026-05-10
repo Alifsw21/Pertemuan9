@@ -12,5 +12,6 @@ CREATE TABLE mahasiswa(
 CREATE TABLE krs(
     idKRS INT AUTO_INCREMENT PRIMARY KEY,
     idMahasiswa INT NOT NULL,
-    idKelas INT NOT NULL
+    idKelas INT NOT NULL,
+    FOREIGN KEY (idMahasiswa) REFERENCES mahasiswa(idMahasiswa)
 );
