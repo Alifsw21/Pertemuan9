@@ -51,7 +51,7 @@ const dosen = {
         try {
             const rows = await dosenModel.selectDosen();
 
-            if (rows.affectedRows === 0) {
+            if (rows.length === 0) {
                 return res.status(404).json({
                     success: false,
                     message: 'Data dosen kosong',

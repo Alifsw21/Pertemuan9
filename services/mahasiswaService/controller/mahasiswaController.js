@@ -27,7 +27,7 @@ const mahasiswa = {
             return res.status(201).json({
                 success: true,
                 message: 'Data mahasiswa berhasil dibuat',
-                data: result
+                data: { id: result.insertId, idPengguna, NIM, namaMahasiswa, kelas }
             });
         } catch (error) {
             console.error("Error pada saat membuat data mahasiswa:", error);
@@ -49,9 +49,9 @@ const mahasiswa = {
         }
 
         try {
-            const row = await mahasiswaModel.selectMahasiswa();
+            const rows = await mahasiswaModel.selectMahasiswa();
 
-            if (row.length === 0) {
+            if (rows.length === 0) {
                 return res.status(404).json({
                     success: false,
                     message: 'Data mahasiswa kosong',
@@ -62,7 +62,7 @@ const mahasiswa = {
             return res.status(200).json({
                 success: true,
                 message: 'Data mahasiswa berhasil diambil',
-                data: row
+                data: rows
             });
         } catch (error) {
             console.error("Error pada saat melihat data mahasiswa:", error);
@@ -109,7 +109,7 @@ const mahasiswa = {
             return res.status(200).json({
                 success: true,
                 message: `Data mahasiswa dengan ${idMahasiswa} berhasil diperbarui`,
-                data: result
+                data: { id: result.insertId, idPengguna, NIM, namaMahasiswa, kelas }
             });
         } catch (error) {
             console.error("Error pada saat memperbarui data mahasiswa:", error);

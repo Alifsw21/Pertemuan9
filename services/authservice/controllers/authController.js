@@ -57,6 +57,14 @@ const auth = {
     },
     
     selectUser: async (req, res) => {
+        if (!req.user.role || req.user.role !== 'admin') {
+            return res.status(403).json({
+                success: false,
+                message: 'Akses ditolak',
+                data: null
+            });
+        }
+
         try {
             const rows = await authModel.selectUser();
 
