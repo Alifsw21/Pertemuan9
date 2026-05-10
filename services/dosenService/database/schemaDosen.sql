@@ -1,0 +1,25 @@
+CREATE DATABASE IF NOT EXISTS Alif_2410511002_dbDosen;
+USE Alif_2410511002_dbDosen;
+
+CREATE TABLE dosen(
+    idDosen INT AUTO_INCREMENT PRIMARY KEY,
+    idPengguna INT NOT NULL,
+    NIP VARCHAR(50) NOT NULL,
+    namaDosen VARCHAR(100) NOT NULL
+);
+
+CREATE TABLE mataKuliah(
+    idMatkul INT AUTO_INCREMENT PRIMARY KEY,
+    kodeMatkul VARCHAR(20) NOT NULL,
+    namaMatkul VARCHAR(100) NOT NULL,
+    sks INT NOT NULL
+);
+
+CREATE TABLE kelas(
+    idKelas INT AUTO_INCREMENT PRIMARY KEY,
+    idDosen INT NOT NULL,
+    idMatkul INT NOT NULL,
+    namaKelas VARCHAR(50) NOT NULL,
+    FOREIGN KEY (idDosen) REFERENCES dosen(idDosen),
+    FOREIGN KEY (idMatkul) REFERENCES mataKuliah(idMatkul)
+);
